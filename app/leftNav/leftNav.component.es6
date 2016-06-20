@@ -23,10 +23,10 @@ class LeftNavController {
         this._$location.path(item.route);
     }
 
-    static factory($location, $scope, routingService) { return new LeftNavController($location, $scope, routingService); }
+    static factory(...args) { return new LeftNavController(...args); }
 }
 
-LeftNavController.$inject = ["$location", "$scope", "routingService", LeftNavController.factory];
+LeftNavController.$inject = ["$location", "$scope", "main.routingService", LeftNavController.factory];
 
 
 

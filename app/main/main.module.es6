@@ -10,10 +10,10 @@ class AppModule extends ngClass.Module {
     constructor() {
         super({
             name: "app",
+            namespace: "main",
             dependencies: [ngRoute, modal, tabs, LeftNavFeature]
         });
     }
 }
 
-const theApp = new AppModule();
-export default theApp;
+export default AppModule.register();

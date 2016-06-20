@@ -2,6 +2,7 @@
 
 import Enum from "./enum.es6";
 
+
 const DependencyItemType = new Enum({
     Name: 1,
     Module: 2,
@@ -18,6 +19,7 @@ function getDependencyItemType(item) {
 
     return undefined;
 }
+
 
 class DependencyItem {
     constructor(item) {
@@ -78,34 +80,52 @@ function buildDependencyArray(inputArray) {
     return outputArray;
 }
 
+
 // module is the ngCalls module instance.  It is required for namespacing.
 // constructor is derived from one of the ngClass recipe factories.
 // Note that this class must have a static named $inject.  This can be manually created, or auto-created by using the
 // @ngInject decorator.
 // The output is a set of strings.
-function buildInjectionArray(module, derivedConstructor, recipeFn = null) {
-    if (derivedConstructor.length > 0 && ! derivedConstructor.$inject)
-        throw new Error(`${derivedConstructor.name}: Injection information missing. Did you forget @ngInject?`);
+function buildInjectionArray(module, derivedClass, proxyFn) {
+    if (derivedClass.length > 0 && ! derivedClass.$inject)
+        throw new Error(`${derivedClass.name}: Injection information missing. Did you forget @ngInject?`);
 
-    if (derivedConstructor.length > 0 && derivedConstructor.length != derivedConstructor.$inject.length)
-        throw new Error(`${derivedConstructor.name}: Length mismatch between derived constructor and $inject`);
+    if (derivedClass.length > 0 && derivedClass.length != derivedClass.$inject.length)
+        throw new Error(`${derivedClass.name}: Length mismatch between derived constructor and $inject`);
 
     let outputArray = [];
-    for (let raw of derivedConstructor.$inject) {
+
+    for (let raw of derivedClass.$inject || []) {
         let item = new InjectionItem(raw);
         outputArray.push(item.namespaceQualifiedName(module));
     }
 
-    if (recipeFn)
-        outputArray.push(recipeFn);
+    // Angular constructs the recipe parts by using fn.apply()
+    // However, when you use ES6 classes, it is not allowed to procedurally call a constructor.
+    // Given an ES6 class (constructor), build a proxy function to create it.
+    if (proxyFn)
+        outputArray.push(proxyFn);
 
     return outputArray;
 }
+
+
+// Given a module and a proposed recipe name, generate the namespace qualified name.
+// If the proposed name is already qualified, or the module does not support namespaces the name will be unchanged.
+function buildRecipeName(module, derivedClass, rawRecipeName) {
+    if (typeof(rawRecipeName) !== "string") throw new Error("${derivedClass.name}.register(): name (string) required.");
+
+    let item = new InjectionItem(rawRecipeName);
+    return item.namespaceQualifiedName(module);
+}
+
 
 export {
     DependencyItem,
     DependencyItemType,
     InjectionItem,
     buildDependencyArray,
-    buildInjectionArray
+    buildInjectionArray,
+    buildInjectionArray,
+    buildRecipeName
 };

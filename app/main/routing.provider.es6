@@ -1,6 +1,7 @@
 // Copyright (c) Alvin Pivowar 2016
 
 import RoutingItem from "./routingItem.model.es6";
+import theApp from "./main.module.es6";
 
 let index = 0;
 const routingInfo = [
@@ -12,35 +13,30 @@ const routingInfo = [
     new RoutingItem(index++, "Recipes", "/recipes", require("../content/recipesTopic.html"))
 ];
 
-class RoutingService {
+class RoutingService extends theApp.Service {
+    /*@ngInject*/
     constructor($q) {
-        this._$q = $q;
+        super();
     }
 
     getRoutingInfo() {
-        return this._$q((accept, reject) => {
-            accept({ data: routingInfo });
+        return this.$q((accept, reject) => {
+            accept({data: this.routingInfo});
         });
     }
-
-    static factory($q) { return new RoutingService($q); }
 }
 
-RoutingService.$inject = ["$q", RoutingService.factory];
-
-
-class RoutingProvider {
-    static get name() { return "routingService"; }
-
+class RoutingProvider extends theApp.Provider {
+    /*@ngInject*/
     constructor() {
-        this.routingInfo = routingInfo;
+        super({
+            name: "routingService",
+            runtimeService: RoutingService,
+            sharedData: routingInfo,
+            sharedDataAs: "routingInfo"
+        });
     }
-
-    get $get() { return RoutingService.$inject; }
-
-    static factory() { return new RoutingProvider(); }
 }
 
-RoutingProvider.$inject = [RoutingProvider.factory];
-
+RoutingProvider.register("routingService");
 export default RoutingProvider;
