@@ -1,36 +1,26 @@
 // Copyright (c) Alvin Pivowar 2016
 
-import {RecipeBase, RecipeHelper} from "./utility/recipe.es6";
+import {RecipeBase, RecipeHelper, RecipeType} from "./utility/recipe.es6";
 
 const Factory = module => {
     return class extends RecipeBase {
         static get ngInstance() { return new RecipeHelper(null, this).getInstanceObj(null); }
 
         constructor(factoryFn) {
-            super();
+            super(RecipeType.Factory);
 
-            if (this.isAngularCalling) {
-                const derivedClass = this.constructor;
-                if (typeof(factoryFn) !== "function")
-                    throw new Error(`Factory ${derivedClass.name} missing required factoryFn.`);
-
-                let helper = new RecipeHelper(module, derivedClass);
-                helper.setInstanceObj(this);
-
-                // Execute the factory function.
-                // If the function returns a reference to the class itself, this is a run-time service that is to be new()ed
-                // for each injection,
-                let result = factoryFn();
-                if (result == derivedClass)
-                    derivedClass[RecipeHelper.CAN_CONSTRUCT_SYMBOL] = true;
-
-                return result || this;
-            }
-        }
-
-        get isAngularCalling() {
             const derivedClass = this.constructor;
-            return !!Object.getOwnPropertySymbols(derivedClass).find(s => s == RecipeHelper.ANGULAR_CONSTRUCTION_SYMBOL);
+            if (typeof(factoryFn) !== "function")
+                throw new Error(`Factory ${derivedClass.name} missing required factoryFn.`);
+
+            let helper = new RecipeHelper(module, derivedClass);
+            helper.setInstanceObj(this);
+
+            let result = factoryFn();
+            if (result == this) throw new Error("A factory function must return an object or a constructor.");
+            if (result == derivedClass) throw new Error("A factory cannot return the constructor of the enclosing class.");
+
+            return result;
         }
 
         static inject() { return RecipeBase.inject(new RecipeHelper(module, this)); }

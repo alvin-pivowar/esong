@@ -1,6 +1,6 @@
 // Copyright (c) Alvin Pivowar 2016
 
-import {RecipeBase, RecipeHelper} from "./utility/recipe.es6";
+import {RecipeBase, RecipeHelper, RecipeType} from "./utility/recipe.es6";
 import Schema from "./utility/schema.es6";
 
 
@@ -26,7 +26,7 @@ const Provider = module => {
 
         constructor(info) {
             providerInfoSchema.validate(info);
-            super();
+            super(RecipeType.Provider);
 
             const derivedClass = this.constructor;
             const helper = new RecipeHelper(module, derivedClass);

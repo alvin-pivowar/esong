@@ -1,4 +1,12 @@
 // Copyright (c) Alvin Pivowar 2016
 
-const module = angular.module("leftNav", []);
-export default module;
+class LeftNavModule extends ngClass.Module {
+    constructor() {
+        super({
+            name: "leftNav",
+            dependencies: []
+        });
+    }
+}
+
+export default LeftNavModule.register();

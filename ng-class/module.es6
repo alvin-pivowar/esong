@@ -2,6 +2,7 @@
 
 import {ConfigBlock, RunBlock} from "./blocks.es6";
 import Controller from "./controller.es6";
+import {Component, Directive} from "./directive.es6";
 import Provider from "./provider.es6";
 import Factory from "./factory.es6";
 import Schema from "./utility/schema.es6";
@@ -61,7 +62,9 @@ class Module {
     }
 
     get Config() { return ConfigBlock(this); }
+    get Component() { return Component(this); }
     get Controller() { return Controller(this); }
+    get Directive() { return Directive(this); }
     get Factory() { return Factory(this); }
     get Provider() { return Provider(this); }
     get Run() { return RunBlock(this); }

@@ -2,9 +2,7 @@
 
 import "./leftNav.less";
 
-import module from "./leftNav.module.es6";
-import component from "./leftNav.component.es6";
+import leftNav from "./leftNav.module.es6";
+import "./leftNav.component.es6";
 
-module.directive(component.name, component.$inject);
-
-export default module;
+export default leftNav;

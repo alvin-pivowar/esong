@@ -87,15 +87,17 @@ function buildDependencyArray(inputArray) {
 // @ngInject decorator.
 // The output is a set of strings.
 function buildInjectionArray(module, derivedClass, proxyFn) {
-    if (derivedClass.length > 0 && ! derivedClass.$inject)
+    const inject = derivedClass.$alias || derivedClass.$inject;
+
+    if (derivedClass.length > 0 && !inject)
         throw new Error(`${derivedClass.name}: Injection information missing. Did you forget @ngInject?`);
 
-    if (derivedClass.length > 0 && derivedClass.length != derivedClass.$inject.length)
+    if (derivedClass.length > 0 && derivedClass.length != inject.length)
         throw new Error(`${derivedClass.name}: Length mismatch between derived constructor and $inject`);
 
     let outputArray = [];
 
-    for (let raw of derivedClass.$inject || []) {
+    for (let raw of inject || []) {
         let item = new InjectionItem(raw);
         outputArray.push(item.namespaceQualifiedName(module));
     }
@@ -113,7 +115,7 @@ function buildInjectionArray(module, derivedClass, proxyFn) {
 // Given a module and a proposed recipe name, generate the namespace qualified name.
 // If the proposed name is already qualified, or the module does not support namespaces the name will be unchanged.
 function buildRecipeName(module, derivedClass, rawRecipeName) {
-    if (typeof(rawRecipeName) !== "string") throw new Error("${derivedClass.name}.register(): name (string) required.");
+    if (typeof(rawRecipeName) !== "string") throw new Error(`${derivedClass.name}.register(): name (string) required.`);
 
     let item = new InjectionItem(rawRecipeName);
     return item.namespaceQualifiedName(module);

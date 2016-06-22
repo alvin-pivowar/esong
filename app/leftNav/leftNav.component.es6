@@ -1,17 +1,23 @@
 // Copyright (c) Alvin Pivowar 2016
 
-class LeftNavController {
-    constructor($location, $scope, routingService) {
-        this._$location = $location;
-        this.activeTabIndex = null;
+import leftNav from "./leftNav.module.es6";
 
-        routingService.getRoutingInfo().then(response => {
+class LeftNavController extends leftNav.Controller {
+    /*@ngInject*/
+    constructor($location, $scope, routingService) {
+        super();
+
+        this.activeTabIndex = null;
+    }
+
+    init() {
+        this.routingService.getRoutingInfo().then(response => {
             this.routing = response.data;
         });
 
-        $scope.$watch(() => $location.path(), () => {
+        this.$scope.$watch(() => this.$location.path(), () => {
             for (let item of this.routing) {
-                if ($location.path().indexOf(item.route) !== -1) {
+                if (this.$location.path().indexOf(item.route) !== -1) {
                     this.activeTabIndex = item.ordinal;
                     break;
                 }
@@ -20,35 +26,25 @@ class LeftNavController {
     }
 
     onTabClick(item) {
-        this._$location.path(item.route);
+        this.$location.path(item.route);
     }
-
-    static factory(...args) { return new LeftNavController(...args); }
 }
 
-LeftNavController.$inject = ["$location", "$scope", "main.routingService", LeftNavController.factory];
+LeftNavController.namespace("main", "routingService");
 
 
-
-class LeftNav {
-    static get name() { return "leftNav"; }
-
+class LeftNavComponent extends leftNav.Component {
+    /*@ngInject*/
     constructor() {
-        this.bindToController = {};
-        this.controller = LeftNavController.$inject;
+        super();
+
+        this.bindings = {};
+        this.controller = LeftNavController.inject();
         this.controllerAs = "vm";
-        this.replace = true;
-        this.restrict = 'E';
-        this.scope = false;
         this.templateUrl = require("./leftNav.html");
     }
-
-    link(scope, elem, attrs) {
-    }
-
-    static factory() { return new LeftNav(); }
 }
 
-LeftNav.$inject = [LeftNav.factory];
 
-export default LeftNav;
+LeftNavComponent.register("leftNav");
+export default LeftNavComponent;
