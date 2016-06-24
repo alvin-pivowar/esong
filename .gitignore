@@ -1,4 +1,4 @@
 .idea/
 node_modules/
-!ng-class/
+!angular-class/
 www/*

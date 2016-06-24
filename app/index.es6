@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "font-awesome/css/font-awesome.css";
 
 import "angular";
-import "../ng-class/ng-class.es6"
+import "../angular-class"
 
 import theApp from "./main/main.feature.es6";
 angular.bootstrap(document.body, [theApp.name]);
