@@ -6,12 +6,11 @@ import Schema from "./utility/schema.es6";
 
 const providerInfoSchema = new Schema({
     factoryFn: "function",
-    name: "string",
     runtimeService: "array or function",
     sharedData: "object",
     sharedDataAs: "string",
 
-    $required: ["name", "runtimeService"],
+    $required: ["runtimeService"],
     $rule: {
         propertyName: "sharedData",
         ruleFn: (obj) => !(obj.sharedDataAs && !obj.sharedData),

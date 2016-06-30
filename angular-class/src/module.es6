@@ -8,6 +8,7 @@ import Factory from "./factory.es6";
 import Schema from "./utility/schema.es6";
 import Service from "./service.es6";
 
+import addInjectionToModel from "./model.es6";
 import {buildDependencyArray, buildRecipeName} from "./utility/di.es6";
 
 
@@ -69,6 +70,10 @@ class Module {
     get Provider() { return Provider(this); }
     get Run() { return RunBlock(this); }
     get Service() { return Service(this); }
+
+    addInjectionToModel(model) {
+        return addInjectionToModel(this, model);
+    }
 
     constant(rawConstantName, constantObj) {
         if (typeof(rawConstantName) !== "string") throw new Error("module.constant(): name (string) required.");

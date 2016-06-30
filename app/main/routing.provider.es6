@@ -30,7 +30,6 @@ class RoutingProvider extends theApp.Provider {
     /*@ngInject*/
     constructor() {
         super({
-            name: "routingService",
             runtimeService: RoutingService,
             sharedData: routingInfo,
             sharedDataAs: "routingInfo"
