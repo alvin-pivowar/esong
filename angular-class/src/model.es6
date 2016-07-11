@@ -27,8 +27,9 @@ class InjectionHandler {
 
 function addInjectionToModel(...args) {
     let [module, model] = new Usage({
-        name: "addInjectionToModel",
-        argFormat: "[module | moduleName], model",
+        $name: "addInjectionToModel",
+        $format: "[module | moduleName], model",
+        $out: ["module", "model"],
         1: "model",
         2: ["module", "model"],
         module: {

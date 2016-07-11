@@ -57,6 +57,10 @@ function validateType(messages, propertyName, schemaPropertyTypeRhs, objectPrope
     for (let schemaPropertyType of schemaPropertyTypes) {
         match = false;
         switch (schemaPropertyType) {
+            case "any":
+                match = true;
+                break;
+
             case "array":
                 match = Array.isArray(objectPropertyValue);
                 break;

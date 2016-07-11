@@ -21,7 +21,7 @@ function determineDefaultStorageType() {
 }
 
 class StorageService {
-    get StorageType() { return StorageType; }
+    static get StorageType() { return StorageType; }
 
     constructor() {
         StorageService.defaultStorageType = determineDefaultStorageType();

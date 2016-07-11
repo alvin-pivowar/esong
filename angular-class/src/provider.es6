@@ -13,7 +13,7 @@ const providerInfoSchema = new Schema({
     $required: ["runtimeService"],
     $rule: {
         propertyName: "sharedData",
-        ruleFn: (obj) => !(obj.sharedDataAs && !obj.sharedData),
+        ruleFn: obj => !(obj.sharedDataAs && !obj.sharedData),
         message: "sharedDataAs requires sharedData."
     }
 });

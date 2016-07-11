@@ -6,27 +6,36 @@ class Usage {
     }
 
     check(args) {
-        let name = this.info.name || "Usage";
+        let name = this.info.$name || "Usage";
         let result = [];
+
         let rule = this.findRule(args);
+        let out = this.info.$out || rule.args;
 
-        for (let i = 0; i < args.length; ++i) {
-            let param = args[i];
-            let paramName = rule.args[i];
+        out.forEach(outParam => {
+            let paramName = rule.args.find(inParam => inParam === outParam);
+            if (paramName) {
+                if (!this.info.hasOwnProperty(paramName))
+                    throw new Error(`${name}: Usage info object missing type rule for ${paramName}.`);
 
-            if (!this.info.hasOwnProperty(paramName))
-                throw new Error(`${name}: Usage info object missing type rule for ${paramName}.`);
+                let param;
+                for (let i = 0; i < rule.args.length; ++i) {
+                    if (rule.args[i] === paramName)
+                        param = args[i];
+                }
 
-            let typeRule = this.findTypeRule(paramName);
-            this.evaluateTypeRule(param, paramName, typeRule);
-            result.push(param);
-        }
+                let typeRule = this.findTypeRule(paramName);
+                this.evaluateTypeRule(param, paramName, typeRule);
+                result.push(param);
+            } else
+                result.push(undefined);
+        });
 
         return result;
     }
 
     evaluateTypeRule(param, paramName, typeRule) {
-        let name = this.info.name || "Usage";
+        let name = this.info.$name || "Usage";
 
         if (typeof(typeRule.rule) === "function") {
             if (!typeRule.rule(param)) {
@@ -67,11 +76,11 @@ class Usage {
 
     findRule(args) {
         const key = args.length.toString();
-        let name = this.info.name || "Usage";
+        let name = this.info.$name || "Usage";
 
         if (!this.info.hasOwnProperty(key)) {
-            if (this.info.name && this.info.argFormat)
-                throw new Error(`usage: ${name}(${this.info.argFormat})`);
+            if (this.info.$name && this.info.$format)
+                throw new Error(`usage: ${name}(${this.info.$format})`);
             else
                 throw new Error(`${name}: parameter count ${key} not supported.`);
         }
@@ -91,7 +100,7 @@ class Usage {
     }
 
     findTypeRule(paramName) {
-        let name = this.info.name || "Usage";
+        let name = this.info.$name || "Usage";
 
         if (!this.info.hasOwnProperty(paramName))
             throw new Error(`${name}: Usage info object missing type rule for ${paramName}.`);
